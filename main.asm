@@ -4,10 +4,6 @@ INCLUDE Macros.inc
     ;array dd 1,4,5,3,2,6,3,2,1,6,5,4
     arrayUnRaindomized dd 1,2,3,4,5,6,1,2,3,4,5,6
     array dd 7,7,7,7,7,7,7,7,7,7,7,7
-
-    MessageBar BYTE "-------",0dh,0ah,0
-    MessageFirst BYTE "First Attempt",0dh,0ah,0
-    MessageSecond BYTE "Second Attempt",0dh,0ah,0
     MessageOK BYTE "OK",0
     WinStatus DWORD -3
     WinTimes DWORD 0
@@ -36,8 +32,8 @@ INCLUDE Macros.inc
     CurrentCursor DWORD 0
     tempFirstLocation DWORD 0
     tempSecondLocation DWORD 0
-    XYPos COORD <0,9>
-    XYPos1 COORD <0,2>
+    XYPos COORD <0,8>
+    XYPos1 COORD <0,1>
     consoleHandle DWORD ?
 
 .code
@@ -74,8 +70,11 @@ RET
 .ENDIF
 
 RAINDOMIZE ENDP
+
 main PROC
 call RAINDOMIZE
+Main1 PROC
+
 MAINPROC:
 ;While Winstatus is 0 run forever
 
@@ -86,8 +85,6 @@ INPUTPROC:
 
 
 
-mov  edx,OFFSET MessageBar
-;call WriteString
 
 .IF u==0
 call OUTFIRST
@@ -345,7 +342,7 @@ mov ebx,Num1
         exit
     .ELSE
     call Clrscr
-    jmp main
+    jmp Main1
     .endif
     
 
@@ -353,17 +350,23 @@ mov ebx,Num1
 .ELSE
     mov isVisible,1
     call DrawGUI_Two
-    call Crlf
+    
     mWrite "Incorrect"
     call Crlf
     mov eax , 2000     ;2¬í
     call     Delay
     call Clrscr
-    jmp main
+    jmp Main1
 .ENDIF
 COMP ENDP
 ret
+
+Main1 ENDP
+ret
 main ENDP
+
+
+
 DrawGUI PROC
 SSS:
      xor eax,eax
@@ -380,9 +383,6 @@ SSS:
      .ENDIF
      .IF tempValueInArray==0
         mWrite "/"
-     .ELSEIF tempValueInArray==757935405
-
-        call     DumpRegs
      .ELSEIF ecx==CurrentCursor
         .IF isVisible==1
             mov eax,tempValueInArray
@@ -486,10 +486,14 @@ DrawGUI_Two ENDP
 OUTFIRST PROC
 mWrite "First Attempt"
 call Crlf
+mWrite "-------"
+call Crlf
 RET
 OUTFIRST ENDP
 
 OUTSECOND PROC
+mWrite "-------"
+call Crlf
 mWrite "Second Attempt"
 call Crlf
 RET
