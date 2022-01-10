@@ -1,7 +1,10 @@
 INCLUDE Irvine32.inc
 INCLUDE Macros.inc
 .data
-    array dd 1,4,5,3,2,6,3,2,1,6,5,4
+    ;array dd 1,4,5,3,2,6,3,2,1,6,5,4
+    arrayUnRaindomized dd 1,2,3,4,5,6,1,2,3,4,5,6
+    array dd 7,7,7,7,7,7,7,7,7,7,7,7
+
     MessageBar BYTE "-------",0dh,0ah,0
     MessageFirst BYTE "First Attempt",0dh,0ah,0
     MessageSecond BYTE "Second Attempt",0dh,0ah,0
@@ -14,10 +17,11 @@ INCLUDE Macros.inc
     First_i DWORD 0
     First_j DWORD 0
     isVisible DWORD 0
-
+    
     Num0 DWORD 0
     Num1 DWORD 0
 
+    ranNum DWORD ?
 
     u DWORD 0
     KeyboardSELECT DWORD -1
@@ -25,6 +29,9 @@ INCLUDE Macros.inc
     s DWORD 0
     q DWORD 0
     g DWORD 0
+    f DWORD 0
+    a DWORD ?
+    b DWORD ?
     tempValueInArray DWORD 0
     CurrentCursor DWORD 0
     tempFirstLocation DWORD 0
@@ -33,40 +40,54 @@ INCLUDE Macros.inc
     XYPos1 COORD <0,2>
     consoleHandle DWORD ?
 
-    buffer  BYTE  50  DUP(0)
-    byteCount   DWORD   ? 
-    intVal SDWORD ?
-    Message1 BYTE "Fibonacci Numbers by, Andy",0dh,0ah,0dh,0ah,0
-    Message2 BYTE "What is your name?:",0
-    MessageName DWORD  ?
-    Message3 BYTE "Hi, ",0
-    MessageSpace BYTE " ",0dh,0ah,0dh,0ah,0
-    MessageNL BYTE 0dh,0ah,0
-    MessageTab BYTE "   ",0
-    Message4 BYTE "How many Fibonacci numbers should I display?",0dh,0ah,0
-    MessageEnter BYTE "Enter and integer in the range [1...25]: ",0
-    MessageError BYTE "That number was out of range, try again.",0dh,0ah,0
-    MessageGoodBye BYTE "Goodbye,",0
-    MessageF1 BYTE "F(",0
-    MessageF2 BYTE ") = ",0
-    MessageFP BYTE ") + ",0
-    Val1   DWORD   ?
-    Val2   DWORD   0
-    Val3   DWORD   0
-    ValMax DWORD ?
-    ValTab DWORD   0
-nextTerm		DWORD	1	;To hold the next term in the sequence, starting with 1
 .code
+RAINDOMIZE PROC
+
+L0:
+call RNG
+L1:
+mov ecx,ranNum
+mov ecx,[array+ecx*4]
+.if ecx != 7
+
+call RNG
+jmp L1
+.else
+jmp L2
+.endif
+L2:
+mov ebx,f
+mov ecx,ranNum
+mov ebx,[arrayUnRaindomized+ebx*4]
+
+;call     DumpRegs
+mov [array+ecx*4],ebx
+;call PRINTALL
+
+
+.IF f<11
+    add f,1
+    ;mshow f
+    jmp L0
+.ELSE
+RET
+.ENDIF
+
+RAINDOMIZE ENDP
 main PROC
+call RAINDOMIZE
 MAINPROC:
 ;While Winstatus is 0 run forever
-
 
 ;for u=0;u<2;u++
 INPUTPROC:
 
+
+
+
+
 mov  edx,OFFSET MessageBar
-call WriteString
+;call WriteString
 
 .IF u==0
 call OUTFIRST
@@ -509,6 +530,16 @@ WIN PROC
 RET
 WIN ENDP
 ;---------------------------------------------------------
+RNG PROC
+    mov  eax,12     ;get random 0 to 99
+    call RandomRange ;
+    mov  ranNum,eax  ;save random number
+    RET
+RNG ENDP
+
+
+
+
 
 PRINTALL PROC
 
