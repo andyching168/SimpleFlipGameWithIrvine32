@@ -145,7 +145,7 @@ LookForKey PROC
         .IF i>0
             add i,-1
         .ENDIF
-        .IF u==0    ;是否為第一次
+        .IF u==0    ;is it first try?
             INVOKE GetStdHandle, STD_OUTPUT_HANDLE
             mov consoleHandle,eax
             INVOKE SetConsoleCursorPosition, consoleHandle, XYPos1
@@ -335,7 +335,7 @@ mov ebx,Num1
     call Crlf
     call WIN
     
-    mov eax , 2000     ;2秒
+    mov eax , 2000     ;2Sec
     call     Delay
     .IF WinTimes==6
         mWrite "You Win"
@@ -353,7 +353,7 @@ mov ebx,Num1
     
     mWrite "Incorrect"
     call Crlf
-    mov eax , 2000     ;2秒
+    mov eax , 2000     ;2Sec
     call     Delay
     call Clrscr
     jmp Main1
