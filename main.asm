@@ -1,11 +1,9 @@
 INCLUDE Irvine32.inc
 INCLUDE Macros.inc
 .data
-    ;array dd 1,4,5,3,2,6,3,2,1,6,5,4
     arrayUnRaindomized dd 1,2,3,4,5,6,1,2,3,4,5,6
     array dd 7,7,7,7,7,7,7,7,7,7,7,7
     MessageOK BYTE "OK",0
-    WinStatus DWORD -3
     WinTimes DWORD 0
     Num DWORD 0,0
     i DWORD 0
@@ -13,12 +11,9 @@ INCLUDE Macros.inc
     First_i DWORD 0
     First_j DWORD 0
     isVisible DWORD 0
-    
     Num0 DWORD 0
     Num1 DWORD 0
-
     ranNum DWORD ?
-
     u DWORD 0
     KeyboardSELECT DWORD -1
     r DWORD 0
@@ -35,62 +30,40 @@ INCLUDE Macros.inc
     XYPos COORD <0,8>
     XYPos1 COORD <0,1>
     consoleHandle DWORD ?
-
 .code
 RAINDOMIZE PROC
-
 L0:
-call RNG
+    call RNG
 L1:
-mov ecx,ranNum
-mov ecx,[array+ecx*4]
-.if ecx != 7
-
-call RNG
-jmp L1
-.else
-jmp L2
-.endif
+    mov ecx,ranNum
+    mov ecx,[array+ecx*4]
+    .if ecx != 7
+        call RNG
+        jmp L1
+    .else
+        jmp L2
+    .endif
 L2:
-mov ebx,f
-mov ecx,ranNum
-mov ebx,[arrayUnRaindomized+ebx*4]
-
-;call     DumpRegs
-mov [array+ecx*4],ebx
-;call PRINTALL
-
-
-.IF f<11
-    add f,1
-    ;mshow f
-    jmp L0
-.ELSE
-RET
-.ENDIF
-
+    mov ebx,f
+    mov ecx,ranNum
+    mov ebx,[arrayUnRaindomized+ebx*4]
+    mov [array+ecx*4],ebx
+    .IF f<11
+        add f,1
+        jmp L0
+    .ELSE
+        RET
+    .ENDIF
 RAINDOMIZE ENDP
 
 main PROC
 call RAINDOMIZE
 Main1 PROC
-
-MAINPROC:
-;While Winstatus is 0 run forever
-
-;for u=0;u<2;u++
 INPUTPROC:
-
-
-
-
-
-
 .IF u==0
-call OUTFIRST
+    call OUTFIRST
 .ELSE
-
-call OUTSECOND
+    call OUTSECOND
 .ENDIF
 
 LookForKey PROC
@@ -102,10 +75,8 @@ LookForKey PROC
     
 
 
-
+    ;KeyMapping
     .IF dx==VK_DOWN
-        ;mov  edx,OFFSET MessageOK
-        ;call WriteString
         .IF i<2
             add i,1
         .ENDIF
@@ -113,33 +84,16 @@ LookForKey PROC
             INVOKE GetStdHandle, STD_OUTPUT_HANDLE
             mov consoleHandle,eax
             INVOKE SetConsoleCursorPosition, consoleHandle, XYPos1
-            ;gotoxy(0,2)
         .ELSE
             INVOKE GetStdHandle, STD_OUTPUT_HANDLE
             mov consoleHandle,eax
             INVOKE SetConsoleCursorPosition, consoleHandle, XYPos
-            ;gotoxy(0,13)
         .ENDIF
         call Crlf
-
         mov isVisible,0
-
         call UPDATECursor
         call DrawGUI
-        mWrite "["
-        mov eax,i
-        add eax,1
-        call WriteDec
-        mWrite "] "
-        mWrite "["
-        mov eax,j
-        add eax,1
-        call WriteDec
-        mWrite "]"
-        
-
-
-
+        call WRITEARRAYSTATUS
     .ENDIF
     .IF dx==VK_UP
         .IF i>0
@@ -149,27 +103,16 @@ LookForKey PROC
             INVOKE GetStdHandle, STD_OUTPUT_HANDLE
             mov consoleHandle,eax
             INVOKE SetConsoleCursorPosition, consoleHandle, XYPos1
-            ;gotoxy(0,2)
         .ELSE
             INVOKE GetStdHandle, STD_OUTPUT_HANDLE
             mov consoleHandle,eax
             INVOKE SetConsoleCursorPosition, consoleHandle, XYPos
-            ;gotoxy(0,13)
         .ENDIF
         call Crlf
         mov isVisible,0
         call UPDATECursor
         call DrawGUI
-        mWrite "["
-        mov eax,i
-        add eax,1
-        call WriteDec
-        mWrite "] "
-        mWrite "["
-        mov eax,j
-        add eax,1
-        call WriteDec
-        mWrite "]"
+        call WRITEARRAYSTATUS
 
     .ENDIF
     .IF dx==VK_LEFT
@@ -180,80 +123,38 @@ LookForKey PROC
             INVOKE GetStdHandle, STD_OUTPUT_HANDLE
             mov consoleHandle,eax
             INVOKE SetConsoleCursorPosition, consoleHandle, XYPos1
-            ;gotoxy(0,2)
         .ELSE
             INVOKE GetStdHandle, STD_OUTPUT_HANDLE
             mov consoleHandle,eax
             INVOKE SetConsoleCursorPosition, consoleHandle, XYPos
-            ;gotoxy(0,13)
         .ENDIF
         call Crlf
         mov isVisible,0
-
         call UPDATECursor
-
         call DrawGUI
-        mWrite "["
-        mov eax,i
-        add eax,1
-        call WriteDec
-        mWrite "] "
-        mWrite "["
-        mov eax,j
-        add eax,1
-        call WriteDec
-        mWrite "]"
-
-
+        call WRITEARRAYSTATUS
     .ENDIF
     .IF dx==VK_RIGHT
         .IF j<3
             add j,1
         .ENDIF
         .IF u==0
-            ;mov  dl,0  ;column
-            ;mov  dh,2  ;row
-            ;call Gotoxy
             INVOKE GetStdHandle, STD_OUTPUT_HANDLE
             mov consoleHandle,eax
             INVOKE SetConsoleCursorPosition, consoleHandle, XYPos1
-            ;gotoxy(0,2)
         .ELSE
-            ;mov  dl,0  ;column
-            ;mov  dh,13  ;row
-            ;call Gotoxy
-            ;SetConsoleCursorPosition(0,13)
             INVOKE GetStdHandle, STD_OUTPUT_HANDLE
             mov consoleHandle,eax
             INVOKE SetConsoleCursorPosition, consoleHandle, XYPos
-            ;gotoxy(0,13)
         .ENDIF
         call Crlf
         mov isVisible,0
-
         call UPDATECursor
-
         call DrawGUI
-        ;extern fflush
-        ;xor  edi, edi          ; RDI = 0
-        ;call fflush            ; fflush(NULL) flushes all streams
-        mWrite "["
-        mov eax,i
-        add eax,1
-        call WriteDec
-        mWrite "] "
-        mWrite "["
-        mov eax,j
-        add eax,1
-        call WriteDec
-        mWrite "]"
-
-        
-
+        call WRITEARRAYSTATUS
     .ENDIF
     .IF dx==VK_HOME
         MOV KeyboardSELECT,5
-        ;call     DumpRegs
         call PRINTALL
     .ENDIF
     .IF dx==VK_RETURN
@@ -266,16 +167,7 @@ LookForKey PROC
         .if edx!=0
             call Crlf
             mWrite "You Picked "
-            mWrite "["
-            mov eax,i
-            add eax,1
-            call WriteDec
-            mWrite "] "
-            mWrite "["
-            mov eax,j
-            add eax,1
-            call WriteDec
-            mWrite "]"
+            call WRITEARRAYSTATUS
             mWrite " is "
             mov eax,i
             shl eax,2
@@ -307,15 +199,8 @@ LookForKey PROC
         jmp LookForKey 
     .ENDIF
     LookForKey ENDP
-
-
-
-
-
-
-
 add u,1
-;mWrite "OK"
+;First time or second time choose
 cmp u,2
 jae LL1
 jb INPUTPROC
@@ -327,33 +212,31 @@ COMP PROC
 mov eax,Num0
 mov ebx,Num1
 
-.IF eax==ebx
+.IF eax==ebx ;Paired Cards
     mov isVisible,1
     call DrawGUI_Two
     call Crlf
     mWrite "Correct"
     call Crlf
     call WIN
-    
-    mov eax , 2000     ;2Sec
+    mov eax , 2000     ;Wait 2 Sec
     call     Delay
-    .IF WinTimes==6
+    .IF WinTimes==6 ;All cards Paired?
         mWrite "You Win"
         exit
     .ELSE
-    call Clrscr
-    jmp Main1
+        call Clrscr
+        jmp Main1
     .endif
     
 
 
-.ELSE
+.ELSE   ;Incorrect cards
     mov isVisible,1
     call DrawGUI_Two
-    
     mWrite "Incorrect"
     call Crlf
-    mov eax , 2000     ;2Sec
+    mov eax , 2000     ;Wait 2 Sec
     call     Delay
     call Clrscr
     jmp Main1
@@ -365,15 +248,15 @@ Main1 ENDP
 ret
 main ENDP
 
+;-----------------------------------
 
-
+;Draw Array to choose card
 DrawGUI PROC
 SSS:
      xor eax,eax
      mov eax,r
      mov ecx,eax
      mov eax,[array+eax*4]
-     ;call writeDec
      mov edx,eax
      mov tempValueInArray,edx
 
@@ -382,6 +265,7 @@ SSS:
      
      .ENDIF
      .IF tempValueInArray==0
+        ;Paired cards
         mWrite "/"
      .ELSEIF ecx==CurrentCursor
         .IF isVisible==1
@@ -426,7 +310,7 @@ RET
 DrawGUI ENDP
 
 
-
+;Draw Array when need to output 2 number in array
 DrawGUI_Two PROC
 L0:
      xor eax,eax
@@ -482,7 +366,7 @@ DrawGUI_Two ENDP
 
 
 
-
+;Prompt First
 OUTFIRST PROC
 mWrite "First Attempt"
 call Crlf
@@ -491,6 +375,8 @@ call Crlf
 RET
 OUTFIRST ENDP
 
+
+;Prompt Second
 OUTSECOND PROC
 mWrite "-------"
 call Crlf
@@ -499,6 +385,9 @@ call Crlf
 RET
 OUTSECOND ENDP
 
+
+
+;Update now cursor location
 UPDATECursor PROC
 mov esi,i
 shl ESI,2
@@ -507,6 +396,8 @@ add esi,edi
 mov CurrentCursor,esi
 RET
 UPDATECursor ENDP
+
+;Prompt Picked Before message
 INPUTERROR PROC
 
 call Crlf
@@ -523,6 +414,8 @@ call Clrscr
 
 RET
 INPUTERROR ENDP
+
+;Modify the win value in array to 0
 WIN PROC
     mov eax,tempFirstLocation
     mov [array+eax*4],0
@@ -534,8 +427,11 @@ WIN PROC
 RET
 WIN ENDP
 ;---------------------------------------------------------
+
+
+;Random number 0~11
 RNG PROC
-    mov  eax,12     ;get random 0 to 99
+    mov  eax,12     ;get random 0 to 11
     call RandomRange ;
     mov  ranNum,eax  ;save random number
     RET
@@ -544,7 +440,7 @@ RNG ENDP
 
 
 
-
+;Debugging PRINTALL can trigger by pressing HOME
 PRINTALL PROC
 
 mov eax,g
@@ -560,6 +456,20 @@ mov g,0
 RET
 PRINTALL ENDP
 
+;Write [A][B] Message
+WRITEARRAYSTATUS PROC
+        mWrite "["
+        mov eax,i
+        add eax,1
+        call WriteDec
+        mWrite "] "
+        mWrite "["
+        mov eax,j
+        add eax,1
+        call WriteDec
+        mWrite "]"
+RET
+WRITEARRAYSTATUS ENDP
     
 
 END main
