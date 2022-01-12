@@ -33,12 +33,12 @@ INCLUDE Macros.inc
 .code
 RAINDOMIZE PROC
 L0:
-    call RNG
+    call RNG    ;0-11 random number in ranNum
 L1:
     mov ecx,ranNum
     mov ecx,[array+ecx*4]
     .if ecx != 7
-        call RNG
+        call RNG    ;0-11 random number in ranNum
         jmp L1
     .else
         jmp L2
